@@ -52,8 +52,8 @@ public class DSA_project {
 
         do {
             System.out.println("\n===== CLOTHING INVENTORY SYSTEM =====");
-            System.out.println("1. View Total Stock");
-            System.out.println("2. View Individual Product Stock");
+            System.out.println("1. View Total quantity of items");
+            System.out.println("2. View Individual Product amount");
             System.out.println("3. View Total Stock Value");
             System.out.println("4. Place Stock Order");
             System.out.println("5. View Pending Orders");

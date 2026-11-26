@@ -47,18 +47,20 @@ public class DSA_project {
         products.add(new Product("Shirts", 10, 2000));
         products.add(new Product("Pants", 15, 3000));
         products.add(new Product("Dresses", 20, 4000));
+        products.add(new Product("Jackets", 25, 5000));
 
         int choice;
 
         do {
             System.out.println("\n===== CLOTHING INVENTORY SYSTEM =====");
-            System.out.println("1. View Total quantity of items");
-            System.out.println("2. View Individual Product amount");
+            System.out.println("1. View Total Stock");
+            System.out.println("2. View Individual Product Stock");
             System.out.println("3. View Total Stock Value");
             System.out.println("4. Place Stock Order");
             System.out.println("5. View Pending Orders");
             System.out.println("6. Receive Stock Order");
             System.out.println("7. Exit");
+            System.out.println("8. Reset Inventory");
 
             System.out.print("Enter your choice: ");
             choice = input.nextInt();
@@ -91,6 +93,10 @@ public class DSA_project {
 
                 case 7:
                     System.out.println("Exiting system...");
+                    break;
+
+                case 8:
+                    resetInventory();
                     break;
 
                 default:
@@ -223,16 +229,17 @@ public class DSA_project {
                         if (products.get(j).name.equalsIgnoreCase(
                                 orders.get(i).productName)) {
 
-                            // Add ordered quantity to existing stock
+                            // Update product quantity
                             products.get(j).quantity += orders.get(i).quantity;
 
                             // Mark order as received
                             orders.get(i).received = true;
 
                             System.out.println("Order received successfully!");
-                            System.out.println("Updated " +
-                                    products.get(j).name + " quantity: " +
-                                    products.get(j).quantity);
+                            System.out.println("Updated "
+                                    + products.get(j).name
+                                    + " quantity: "
+                                    + products.get(j).quantity);
 
                             // Remove order from pending list
                             orders.remove(i);
@@ -248,5 +255,28 @@ public class DSA_project {
         }
 
         System.out.println("Pending order ID not found!");
+    }
+
+    // Reset all product quantities
+    public static void resetInventory() {
+
+        System.out.print("Are you sure you want to reset inventory? (yes/no): ");
+        String confirm = input.next();
+
+        if (confirm.equalsIgnoreCase("yes")) {
+
+            for (int i = 0; i < products.size(); i++) {
+
+                products.get(i).quantity = 0;
+            }
+
+            System.out.println("Inventory successfully reset!");
+            System.out.println("All product quantities are now 0.");
+            System.out.println("Total stock value is now Rs. 0.");
+        }
+
+        else {
+            System.out.println("Inventory reset cancelled.");
+        }
     }
 }

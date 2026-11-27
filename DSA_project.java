@@ -1,8 +1,10 @@
+
 package com.mycompany.dsa_project;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.io.*;
+
 
 class Product {
     String name;
@@ -41,13 +43,12 @@ public class DSA_project {
 
     static int nextOrderID = 1;
 
+    static String fileName = "inventory.txt";
+
     public static void main(String[] args) {
 
-        // Initial inventory
-        products.add(new Product("Shirts", 10, 2000));
-        products.add(new Product("Pants", 15, 3000));
-        products.add(new Product("Dresses", 20, 4000));
-        products.add(new Product("Jackets", 25, 5000));
+        // Load previously saved data
+        loadData();
 
         int choice;
 
@@ -92,6 +93,7 @@ public class DSA_project {
                     break;
 
                 case 7:
+                    saveData();
                     System.out.println("Exiting system...");
                     break;
 
@@ -277,6 +279,118 @@ public class DSA_project {
 
         else {
             System.out.println("Inventory reset cancelled.");
+        }
+    }
+
+    // Save products and orders to text file
+    public static void saveData() {
+
+        try {
+
+            PrintWriter writer = new PrintWriter(
+                    new FileWriter(fileName));
+
+            // Save next order ID
+            writer.println("NEXT|" + nextOrderID);
+
+            // Save products
+            for (int i = 0; i < products.size(); i++) {
+
+                Product p = products.get(i);
+
+                writer.println("P|" + p.name + "|"
+                        + p.quantity + "|" + p.price);
+            }
+
+            // Save pending orders
+            for (int i = 0; i < orders.size(); i++) {
+
+                StockOrder o = orders.get(i);
+
+                writer.println("O|" + o.orderID + "|"
+                        + o.productName + "|"
+                        + o.quantity + "|"
+                        + o.supplier);
+            }
+
+            writer.close();
+
+            System.out.println("Data saved successfully!");
+
+        } catch (IOException e) {
+
+            System.out.println("Error saving data!");
+            System.out.println(e.getMessage());
+        }
+    }
+
+    // Load products and orders from text file
+    public static void loadData() {
+
+        File file = new File(fileName);
+
+        // If file does not exist, create initial inventory
+        if (!file.exists()) {
+
+            System.out.println("No saved data found.");
+            System.out.println("Creating new inventory...");
+
+            products.add(new Product("Shirts", 10, 2000));
+            products.add(new Product("Pants", 15, 3000));
+            products.add(new Product("Dresses", 20, 4000));
+            products.add(new Product("Jackets", 25, 5000));
+
+            return;
+        }
+
+        try {
+
+            BufferedReader reader = new BufferedReader(
+                    new FileReader(file));
+
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+
+                String[] data = line.split("\\|");
+
+                // Load next order ID
+                if (data[0].equals("NEXT")) {
+
+                    nextOrderID = Integer.parseInt(data[1]);
+                }
+
+                // Load products
+                else if (data[0].equals("P")) {
+
+                    String name = data[1];
+                    int quantity = Integer.parseInt(data[2]);
+                    double price = Double.parseDouble(data[3]);
+
+                    products.add(new Product(name, quantity, price));
+                }
+
+                // Load pending orders
+                else if (data[0].equals("O")) {
+
+                    int id = Integer.parseInt(data[1]);
+                    String productName = data[2];
+                    int quantity = Integer.parseInt(data[3]);
+                    String supplier = data[4];
+
+                    orders.add(new StockOrder(
+                            id, productName, quantity, supplier));
+                }
+            }
+
+            reader.close();
+
+            System.out.println("Saved data loaded successfully!");
+
+        } catch (IOException | NumberFormatException e) {
+
+            System.out.println("Error loading saved data!");
+            System.out.println(e.getMessage());
         }
     }
 }
